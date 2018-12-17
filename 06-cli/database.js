@@ -52,8 +52,8 @@ class Database {
      * }
      */
     const heroiComId = {
+      ...heroi,
       id,
-      ...heroi
     }
     const dadosFinal = [
       ...dados,
@@ -110,16 +110,13 @@ class Database {
       throw Error('O heroi informado não existe')
     }
     const atual = dados[indice]
-    const objetoAtualizar = {
-      ...atual,
-      ...modificacoes
-    }
     dados.splice(indice, 1)
 
-    return await this.escreverArquivo([
-      ...dados,
-      objetoAtualizar
-    ])
+    //workaround para remover valores undefined do objeto
+    const objAtualizado = JSON.parse(JSON.stringify(modificacoes));
+    const dadoAtualizado = Object.assign({}, atual, objAtualizado);
+
+    return await this.escreverArquivo([...dados, dadoAtualizado]);
   }
 }
 
